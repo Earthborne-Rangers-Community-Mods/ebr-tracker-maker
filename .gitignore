@@ -1,0 +1,30 @@
+# --- Node / Frontend ---
+
+node_modules/
+dist/
+build/
+*.tsbuildinfo
+.svelte-kit/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# --- OS ---
+
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# --- Editor ---
+
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
