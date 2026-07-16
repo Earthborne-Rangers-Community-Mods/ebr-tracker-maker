@@ -361,6 +361,7 @@
     flex-direction: column;
     gap: 6px;
     padding: 0 14px;
+    margin-top: 18px;
   }
   .rangers .col-head {
     margin-bottom: 2px;
