@@ -181,21 +181,21 @@
     --paper: #fff;
     --moon-lit: #c7c2b7; /* illuminated portion of the moon */
 
-    /* Stroke tiers - 0.5 / 1.0 / 1.5pt at 1.354px per pt. */
-    --stroke-thin: 0.7px;
-    --stroke-medium: 1.35px;
-    --stroke-heavy: 2px;
+    /* Stroke tiers */
+    --stroke-thin: 0.5pt;
+    --stroke-medium: 1pt;
+    --stroke-heavy: 1.5pt;
 
-    /* Type scale - 12 / 10 / 8 / 7pt at 1.354px per pt. */
-    --fs-title: 16.2px; /* Current Position */
-    --fs-label: 13.5px; /* section labels, day numbers, field labels */
-    --fs-small: 10.8px; /* column headers, book + weather labels */
-    --fs-caption: 9.5px; /* subtitle, footer */
+    /* Type scale */
+    --fs-title: 12pt; /* Current Position */
+    --fs-label: 10pt; /* section labels, day numbers, field labels */
+    --fs-small: 8pt; /* column headers, book + weather labels */
+    --fs-caption: 7pt; /* subtitle, footer */
 
     /* Corner radii. */
-    --radius-box: 10px;
-    --radius-daybox: 5px;
-    --radius-diamond: 2.5px;
+    --radius-box: 6pt;
+    --radius-daybox: 4pt;
+    --radius-diamond: 1.75pt;
 
     /* Fonts. */
     --font-body: "Ikarius ADF No2", Georgia, serif;
@@ -213,25 +213,25 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 16px;
+    padding: 12pt;
   }
 
   /* A4 landscape canvas. Width is physical so 1:1 print fills the page exactly;
-     the internal px sizes are calibrated to this width. */
+     internal sizes are in pt so print output stays resolution-independent. */
   .sheet {
     width: 297mm;
     box-sizing: border-box;
     background: var(--paper);
-    padding: 20px 30px 11px;
+    padding: 15pt 22pt 8pt;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 4.5pt;
   }
 
   .write-line {
     display: block;
     border-bottom: var(--stroke-thin) solid var(--ink);
-    height: 19px;
+    height: 14pt;
   }
 
   /* ===== Day track ===== */
@@ -240,8 +240,9 @@
     grid-template-columns: repeat(30, 1fr);
     grid-template-rows: auto auto auto;
     align-items: center;
-    row-gap: 2px;
-    margin-bottom: 11px;
+    row-gap: 1.5pt;
+    padding: 0 8pt;
+    margin-bottom: 8pt;
   }
   .book {
     grid-row: 1;
@@ -252,19 +253,19 @@
   }
   .book-ico {
     font-family: var(--font-symbol);
-    font-size: 13px;
+    font-size: 9.5pt;
     line-height: 1;
   }
   .book-label {
     font-size: var(--fs-small);
-    margin-top: 1px;
+    margin-top: 0.75pt;
   }
   .circle {
     grid-row: 2;
     justify-self: center;
     position: relative;
-    width: 27px;
-    height: 27px;
+    width: 20pt;
+    height: 20pt;
   }
   .moon {
     display: block;
@@ -299,18 +300,18 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 0 2px;
+    padding: 0 1.5pt;
   }
   .brace {
     display: block;
-    height: 11px;
+    height: 8pt;
     border: var(--stroke-thin) solid var(--ink);
     border-top: none;
-    border-radius: 0 0 7px 7px;
+    border-radius: 0 0 3pt 3pt;
   }
   .wlabel {
     font-size: var(--fs-small);
-    margin-top: 4px;
+    margin-top: 3pt;
     text-align: center;
     line-height: 1.1;
     white-space: nowrap;
@@ -319,13 +320,13 @@
   /* ===== Middle band ===== */
   .mid {
     display: grid;
-    grid-template-columns: 220px 1fr;
-    gap: 26px;
+    grid-template-columns: 163pt 1fr;
+    gap: 19pt;
   }
   .left-col {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6pt;
   }
 
   .wordmark {
@@ -335,7 +336,7 @@
     line-height: 1;
   }
   .wm-logo {
-    width: 200px;
+    width: 148pt;
     height: auto;
     display: block;
   }
@@ -344,7 +345,7 @@
     letter-spacing: 0.28em;
     text-transform: uppercase;
     color: var(--ink-strong);
-    margin-top: 6px;
+    margin-top: 4.5pt;
   }
 
   .col-head,
@@ -353,64 +354,61 @@
     letter-spacing: 0.16em;
     font-size: var(--fs-label);
   }
-  .section-cap {
-    margin-left: 30px;
-  }
   .rangers {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    padding: 0 14px;
-    margin-top: 18px;
+    gap: 4.5pt;
+    padding: 0 10.5pt;
+    margin-top: 13pt;
   }
   .rangers .col-head {
-    margin-bottom: 2px;
+    margin-bottom: 1.5pt;
   }
 
   .current-position {
     margin-top: auto;
     border: var(--stroke-medium) solid var(--ink);
     border-radius: var(--radius-box);
-    padding: 8px 14px 10px;
+    padding: 6pt 10.5pt 7.5pt;
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 2pt;
   }
   .cp-title {
     text-align: center;
     font-size: var(--fs-title);
-    margin-bottom: 4px;
+    margin-bottom: 3pt;
   }
   .field-label {
     font-size: var(--fs-label);
-    margin-top: 4px;
+    margin-top: 3pt;
   }
 
   /* ===== Missions ===== */
   .missions {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6pt;
   }
   .mission-cols {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 26px;
+    gap: 19pt;
   }
   .mcol {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 4.5pt;
   }
   .mrow {
     display: grid;
-    grid-template-columns: 22px 1fr 50px;
+    grid-template-columns: 16pt 1fr 42.75pt;
     align-items: center;
-    gap: 8px;
+    gap: 6pt;
   }
   .mrow.head {
     align-items: baseline;
-    margin-bottom: 2px;
+    margin-bottom: 1.5pt;
   }
   .mh-day,
   .mh-name,
@@ -422,24 +420,25 @@
     text-align: left;
   }
   .day-box {
-    width: 18px;
-    height: 18px;
+    width: 13pt;
+    height: 13pt;
     border: var(--stroke-heavy) solid var(--gray);
     border-radius: var(--radius-daybox);
   }
   .name-line {
     border-bottom: var(--stroke-thin) solid var(--ink);
-    height: 17px;
+    height: 12.5pt;
   }
   .prog {
     display: inline-flex;
-    gap: 8.5px;
+    justify-content: center;
+    gap: 6pt;
   }
   .prog i {
     box-sizing: border-box;
     flex-shrink: 0;
-    width: 12px;
-    height: 12px;
+    width: 9pt;
+    height: 9pt;
     border: var(--stroke-medium) solid var(--gray);
     border-radius: var(--radius-diamond);
     transform: rotate(45deg);
@@ -449,17 +448,18 @@
   .bottom {
     display: grid;
     grid-template-columns: 1.55fr 1fr;
-    gap: 46px;
+    gap: 34pt;
+    margin-top: 4.5pt;
   }
   .lbox {
     position: relative;
     border: var(--stroke-medium) solid var(--ink);
     border-radius: var(--radius-box);
-    padding: 8px 13px 13px;
+    padding: 6pt 9.5pt 9.5pt;
   }
   .vlabel {
     position: absolute;
-    left: -19px;
+    left: -14pt;
     bottom: 0;
     writing-mode: vertical-rl;
     transform: rotate(180deg);
@@ -470,7 +470,7 @@
   }
   .line-cols {
     display: grid;
-    gap: 22px;
+    gap: 16pt;
   }
   .rewards .line-cols {
     grid-template-columns: repeat(3, 1fr);
@@ -481,7 +481,7 @@
   .line-col {
     display: flex;
     flex-direction: column;
-    gap: 7px;
+    gap: 5pt;
   }
 
   @media print {
