@@ -1,0 +1,50 @@
+/* Global design tokens and document chrome, shared by the tracker form and the
+   printable sheet. Measured from the official sheet. */
+:root {
+  --ink: #231f20; /* near-black: text, boxes, rules, brackets, circles */
+  --ink-strong: #030405; /* near-pure black: wordmark subtitle */
+  --gray: #636466; /* day boxes and progress diamonds */
+  --paper: #fff;
+  --moon-lit: #c7c2b7; /* illuminated portion of the moon */
+  --error: #9a2b2b; /* form error text */
+
+  /* Form UI chrome. */
+  --chrome-bg: #f5f3ed; /* form band background */
+  --chrome-surface: #fbfbfa; /* cards, inputs, active tab, buttons */
+  --chrome-border: #d3cfc8; /* chrome borders */
+  --chrome-hover: #edeae4; /* button / tab hover */
+
+  /* Stroke tiers */
+  --stroke-thin: 0.5pt;
+  --stroke-medium: 1pt;
+  --stroke-heavy: 1.5pt;
+
+  /* Type scale */
+  --fs-title: 12pt; /* Current Position */
+  --fs-label: 10pt; /* section labels, day numbers, field labels */
+  --fs-small: 8pt; /* column headers, book + weather labels */
+  --fs-caption: 7pt; /* subtitle, footer */
+
+  /* Corner radii. */
+  --radius-box: 6pt;
+  --radius-daybox: 4pt;
+  --radius-diamond: 1.75pt;
+
+  /* Fonts. */
+  --font-body: "Ikarius ADF No2", Georgia, serif;
+  --font-symbol: "Segoe UI Symbol", "Noto Sans Symbols 2", sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  font-family: var(--font-body);
+  color: var(--ink);
+}
+
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+}
