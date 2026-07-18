@@ -2,11 +2,15 @@ import { describe, it, expect } from "vitest";
 import {
   TRACKER_DAYS,
   SCHEMA_VERSION,
+  STORAGE_KEY,
   FormStateError,
   defaultTrackerState,
   serializeState,
   parseState,
+  persistState,
+  loadPersistedState,
   isImageDataUrl,
+  type StateStorage,
   type TrackerState,
 } from "../src/lib/form-state";
 
@@ -270,5 +274,99 @@ describe("isImageDataUrl", () => {
       JSON.stringify({ logoMode: "custom", logoDataUrl: svg }),
     );
     expect(state.logoDataUrl).toBe(svg);
+  });
+});
+
+/** In-memory Web Storage stand-in for the auto-save helpers. */
+class MemStorage implements StateStorage {
+  private map = new Map<string, string>();
+  getItem(key: string): string | null {
+    return this.map.has(key) ? (this.map.get(key) as string) : null;
+  }
+  setItem(key: string, value: string): void {
+    this.map.set(key, value);
+  }
+  removeItem(key: string): void {
+    this.map.delete(key);
+  }
+}
+
+/** Storage stand-in whose every operation throws (disabled/quota-exceeded). */
+class ThrowingStorage implements StateStorage {
+  getItem(): string | null {
+    throw new Error("storage disabled");
+  }
+  setItem(): void {
+    throw new Error("quota exceeded");
+  }
+  removeItem(): void {
+    throw new Error("storage disabled");
+  }
+}
+
+describe("persistState / loadPersistedState auto-save", () => {
+  it("round-trips state through storage under the shared key", () => {
+    const storage = new MemStorage();
+    const state = defaultTrackerState();
+    persistState(() => storage, state);
+    expect(storage.getItem(STORAGE_KEY)).not.toBeNull();
+    expect(loadPersistedState(() => storage)).toEqual(state);
+  });
+
+  it("returns null when nothing has been saved yet", () => {
+    expect(loadPersistedState(() => new MemStorage())).toBeNull();
+  });
+
+  it("returns null when the saved value is malformed", () => {
+    const storage = new MemStorage();
+    storage.setItem(STORAGE_KEY, "not json");
+    expect(loadPersistedState(() => storage)).toBeNull();
+  });
+
+  it("returns null when the saved value parses but is invalid", () => {
+    const storage = new MemStorage();
+    storage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ logoMode: "default", books: [{ col: 999, label: "x" }] }),
+    );
+    expect(loadPersistedState(() => storage)).toBeNull();
+  });
+
+  it("returns null when a javascript: logo URL is injected via storage (XSS guard)", () => {
+    // Confirms the security gate holds at the storage boundary, not only inside
+    // parseState directly: loadPersistedState must swallow the rejection and
+    // return null rather than propagating the error.
+    const storage = new MemStorage();
+    storage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ logoMode: "custom", logoDataUrl: "javascript:alert(1)" }),
+    );
+    expect(loadPersistedState(() => storage)).toBeNull();
+  });
+
+  it("swallows storage write failures (best-effort auto-save)", () => {
+    expect(() =>
+      persistState(() => new ThrowingStorage(), defaultTrackerState()),
+    ).not.toThrow();
+  });
+
+  it("swallows storage read failures and degrades to null", () => {
+    expect(loadPersistedState(() => new ThrowingStorage())).toBeNull();
+  });
+
+  it("swallows a throw from obtaining storage on save (sandboxed browser)", () => {
+    // Some browsers throw on `localStorage` access itself, before any method
+    // runs. The thunk lets the helper guard that too.
+    const boom = () => {
+      throw new Error("localStorage is not available");
+    };
+    expect(() => persistState(boom, defaultTrackerState())).not.toThrow();
+  });
+
+  it("returns null when obtaining storage throws on load (sandboxed browser)", () => {
+    const boom = () => {
+      throw new Error("localStorage is not available");
+    };
+    expect(loadPersistedState(boom)).toBeNull();
   });
 });

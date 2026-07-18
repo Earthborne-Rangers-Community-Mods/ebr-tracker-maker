@@ -11,6 +11,9 @@ export const TRACKER_DAYS = 30;
 /** Schema version stamped into saved files so future loaders can migrate. */
 export const SCHEMA_VERSION = 1;
 
+/** localStorage key the auto-save layer keeps the last session under. */
+export const STORAGE_KEY = "ebr-tracker-maker:last-session";
+
 /** How the wordmark slot is filled. */
 export type LogoMode = "default" | "custom" | "placeholder" | "text";
 
@@ -224,4 +227,62 @@ function parseLabel(value: unknown): string {
     throw new FormStateError("A saved label is not text.");
   }
   return value;
+}
+
+/**
+ * The subset of the Web Storage API the auto-save layer needs. Taking this as a
+ * parameter (rather than reaching for the global `localStorage`) keeps the
+ * persistence helpers pure and testable with an in-memory fake.
+ */
+export interface StateStorage {
+  getItem(key: string): string | null;
+  setItem(key: string, value: string): void;
+  removeItem(key: string): void;
+}
+
+/**
+ * Auto-save the current tracker state to device-local storage. Best-effort;
+ * Auto-save must never interrupt editing, so `getStorage` is a thunk and
+ * both failures are swallowed.
+ */
+export function persistState(
+  getStorage: () => StateStorage,
+  state: TrackerState,
+): void {
+  let storage: StateStorage;
+  try {
+    storage = getStorage();
+  } catch {
+    return;
+  }
+  try {
+    storage.setItem(STORAGE_KEY, serializeState(state));
+  } catch {
+    return;
+  }
+}
+
+/**
+ * Restore the last auto-saved tracker state. Returns null when storage cannot
+ * be obtained, nothing is saved, or the saved value is unreadable or malformed
+ * - unlike a user-picked file, device-local auto-save state degrades silently
+ * to the default sheet rather than surfacing an error. `getStorage` is a thunk
+ * because obtaining `localStorage` itself can throw in a sandboxed or
+ * cookies-disabled browser.
+ */
+export function loadPersistedState(
+  getStorage: () => StateStorage,
+): TrackerState | null {
+  let json: string | null;
+  try {
+    json = getStorage().getItem(STORAGE_KEY);
+  } catch {
+    return null;
+  }
+  if (json === null) return null;
+  try {
+    return parseState(json);
+  } catch {
+    return null;
+  }
 }

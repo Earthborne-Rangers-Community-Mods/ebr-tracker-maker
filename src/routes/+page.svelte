@@ -1,11 +1,35 @@
 <script lang="ts">
-  import { defaultTrackerState, type TrackerState } from "$lib/form-state";
+  import { onMount } from "svelte";
+  import {
+    defaultTrackerState,
+    loadPersistedState,
+    persistState,
+    type TrackerState,
+  } from "$lib/form-state";
   import TrackerForm from "$lib/TrackerForm.svelte";
   import TrackerSheet from "$lib/TrackerSheet.svelte";
 
   // The single source of truth for the sheet. The form mutates it; the sheet
   // renders it.
   let tracker: TrackerState = $state(defaultTrackerState());
+
+  // Auto-save: restore the last session on mount, then persist every edit back
+  // to this device.
+  let saveReady = $state(false);
+
+  onMount(() => {
+    const saved = loadPersistedState(() => localStorage);
+    if (saved) tracker = saved;
+    saveReady = true;
+  });
+
+  $effect(() => {
+    // Snapshot first so every nested field is a tracked dependency; this makes
+    // the effect re-run on any edit (add/remove/field change) and on whole-
+    // object replacements from load/reset.
+    const snapshot = $state.snapshot(tracker) as TrackerState;
+    if (saveReady) persistState(() => localStorage, snapshot);
+  });
 </script>
 
 <TrackerForm bind:tracker />
