@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { asset } from "$app/paths";
   import { TRACKER_DAYS, type TrackerState } from "$lib/form-state";
 
   // Read-only view of the tracker state. The form owns mutation.
@@ -7,14 +6,11 @@
 
   const days = Array.from({ length: TRACKER_DAYS }, (_, i) => i + 1);
 
-  // Wordmark source: the official logo (authoring default), an uploaded image,
-  // or null for the neutral placeholder and text slots.
+  // Wordmark source: an uploaded image or null for blank and text slots.
   const logoSrc = $derived(
     tracker.logoMode === "custom" && tracker.logoDataUrl
       ? tracker.logoDataUrl
-      : tracker.logoMode === "default"
-        ? asset("/art/logo.svg")
-        : null,
+      : null,
   );
 
   // Text-wordmark lines, one per newline in the entered text.

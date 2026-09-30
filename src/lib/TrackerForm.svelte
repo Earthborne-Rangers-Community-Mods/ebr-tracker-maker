@@ -252,15 +252,6 @@
               <input
                 type="radio"
                 name="logo-mode"
-                checked={tracker.logoMode === "default"}
-                onchange={() => setLogoMode("default")}
-              />
-              Default logo
-            </label>
-            <label class="radio">
-              <input
-                type="radio"
-                name="logo-mode"
                 checked={tracker.logoMode === "placeholder"}
                 onchange={() => setLogoMode("placeholder")}
               />

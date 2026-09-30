@@ -15,7 +15,7 @@ export const SCHEMA_VERSION = 1;
 export const STORAGE_KEY = "ebr-tracker-maker:last-session";
 
 /** How the wordmark slot is filled. */
-export type LogoMode = "default" | "custom" | "placeholder" | "text";
+export type LogoMode = "custom" | "placeholder" | "text";
 
 /** A journal / campaign-guide marker sitting above a single day column. */
 export interface BookMarker {
@@ -37,7 +37,7 @@ export interface WeatherGroup {
 
 /** Everything the form controls on the sheet. */
 export interface TrackerState {
-  /** `default` uses the official logo; `custom` uses `logoDataUrl`; `placeholder` leaves the slot neutral; `text` renders `logoText`. */
+  /** `custom` uses `logoDataUrl`; `placeholder` leaves the slot neutral; `text` renders `logoText`. */
   logoMode: LogoMode;
   /** Uploaded image as a `data:image/...` URL. Only meaningful when `logoMode === "custom"`. */
   logoDataUrl: string | null;
@@ -55,7 +55,7 @@ export class FormStateError extends Error {
   }
 }
 
-const LOGO_MODES: readonly LogoMode[] = ["default", "custom", "placeholder", "text"];
+const LOGO_MODES: readonly LogoMode[] = ["custom", "placeholder", "text"];
 
 /**
  * Whether a string is an inert embedded image URL safe to use as an `<img src>`.
@@ -77,7 +77,7 @@ export function isImageDataUrl(value: string): boolean {
  */
 export function defaultTrackerState(): TrackerState {
   return {
-    logoMode: "default",
+    logoMode: "text",
     logoDataUrl: null,
     logoText: "LEGACY OF THE\nANCESTORS",
     books: [
@@ -144,6 +144,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function parseLogoMode(value: unknown): LogoMode {
+  if (value === "default") return "text";
   if (typeof value === "string" && (LOGO_MODES as readonly string[]).includes(value)) {
     return value as LogoMode;
   }

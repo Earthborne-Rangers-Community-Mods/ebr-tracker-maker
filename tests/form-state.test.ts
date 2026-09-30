@@ -15,9 +15,9 @@ import {
 } from "../src/lib/form-state";
 
 describe("defaultTrackerState", () => {
-  it("returns the official-logo authoring default", () => {
+  it("returns the text-wordmark authoring default", () => {
     const state = defaultTrackerState();
-    expect(state.logoMode).toBe("default");
+    expect(state.logoMode).toBe("text");
     expect(state.logoDataUrl).toBeNull();
     expect(state.books.length).toBeGreaterThan(0);
     expect(state.weatherGroups.length).toBeGreaterThan(0);
@@ -72,6 +72,14 @@ describe("parseState validation", () => {
     const missing = () => parseState(JSON.stringify({}));
     expect(missing).toThrow(FormStateError);
     expect(missing).toThrow(/logo mode/i);
+  });
+
+  it("migrates the removed default logo mode to text", () => {
+    const state = parseState(
+      JSON.stringify({ logoMode: "default", logoText: "MY CAMPAIGN" }),
+    );
+    expect(state.logoMode).toBe("text");
+    expect(state.logoText).toBe("MY CAMPAIGN");
   });
 
   it("treats missing books and weather as empty lists", () => {
